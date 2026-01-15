@@ -2,7 +2,7 @@
 
 # ================= 配置区域 =================
 # 注意：这里我们只填 GitHub 的原始链接，脚本下面会自动加加速前缀
-GITHUB_FILE_URL="https://github.com/xyf0104/ranxiaoer-pos/raw/refs/heads/main/ranxiaoer_secret_new.enc"
+GITHUB_FILE_URL="https://github.com/xyf0104/ranxiaoer-pos/raw/refs/heads/main/ranxiaoer_secret_v17.enc"
 # ===========================================
 
 # 定义加速代理 (使用 mirror.ghproxy.com 比较稳)
