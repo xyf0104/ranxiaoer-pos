@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # ================= 配置区域 =================
-# 注意：这里我们只填 GitHub 的原始链接，脚本下面会自动加加速前缀
-GITHUB_FILE_URL="https://github.com/xyf0104/ranxiaoer-pos/raw/refs/heads/main/ranxiaoer_secret_v17.enc"
+# ⚠️ 注意：这里的文件名改成了 v17
+GITHUB_FILE_URL="https://github.com/xyf0104/ranxiaoer-pos/raw/main/ranxiaoer_secret_v17.enc"
 # ===========================================
 
-# 定义加速代理 (使用 mirror.ghproxy.com 比较稳)
+# 定义加速代理 (使用 mirror.ghproxy.com)
 PROXY_PREFIX="https://mirror.ghproxy.com/"
 DOWNLOAD_URL="${PROXY_PREFIX}${GITHUB_FILE_URL}"
 
@@ -15,7 +15,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${GREEN}=================================================${NC}"
-echo -e "${GREEN}   🔐 然小二系统 · GitHub 极速恢复脚本 (CN版)${NC}"
+echo -e "${GREEN}   🔐 然小二系统 · GitHub 极速恢复脚本 (v17)${NC}"
 echo -e "${GREEN}=================================================${NC}"
 
 # 1. 检查环境
@@ -36,8 +36,9 @@ if [ ! -f /tmp/system.enc ] || [ ! -s /tmp/system.enc ]; then
     wget -O /tmp/system.enc "$GITHUB_FILE_URL"
 fi
 
-if [ ! -f /tmp/system.enc ] || [ ! -s /tmp/system.enc ]; then
-    echo -e "${RED}❌ 下载失败！请检查 GitHub 链接是否正确。${NC}"
+# 检查是否下载成功 (如果是404，文件通常是空的或者包含错误html)
+if [ ! -f /tmp/system.enc ] || [ ! -s /tmp/system.enc ] || grep -q "404 Not Found" /tmp/system.enc; then
+    echo -e "${RED}❌ 下载失败！请检查 GitHub 仓库里是否有 ranxiaoer_secret_v17.enc 这个文件。${NC}"
     exit 1
 fi
 
