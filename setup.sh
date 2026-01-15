@@ -1,59 +1,82 @@
 #!/bin/bash
 
 # ================= 配置区域 =================
-# 使用 jsDelivr 官方 CDN (最稳)
-# 格式: https://cdn.jsdelivr.net/gh/用户名/仓库名@main/文件名
-DOWNLOAD_URL="https://cdn.jsdelivr.net/gh/xyf0104/ranxiaoer-pos@main/ranxiaoer_secret_v20.enc"
+# 核心文件名
+FILE_NAME="ranxiaoer_secret_v20.enc"
+# GitHub 仓库信息
+GITHUB_USER="xyf0104"
+GITHUB_REPO="ranxiaoer-pos"
+GITHUB_BRANCH="main"
 # ===========================================
+
+# 线路定义
+URL_PAGES="https://${GITHUB_USER}.github.io/${GITHUB_REPO}/${FILE_NAME}"
+URL_PROXY1="https://gh-proxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PROXY2="https://mirror.ghproxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
 
 # 颜色
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
 NC='\033[0m'
 
 echo -e "${GREEN}=================================================${NC}"
-echo -e "${GREEN}   🔐 然小二系统 · 极速恢复脚本 (v20 Final)${NC}"
+echo -e "${GREEN}   🔐 然小二系统 · 智能恢复脚本 (多路自动切换)${NC}"
 echo -e "${GREEN}=================================================${NC}"
 
-# 1. 检查环境
+# 1. 环境准备
 if command -v apt-get >/dev/null; then
     apt-get update -qq && apt-get install -y openssl wget >/dev/null
 elif command -v yum >/dev/null; then
     yum install -y openssl wget >/dev/null
 fi
 
-# 2. 下载
-echo ">> 正在从 CDN 拉取数据..."
-rm -f /tmp/system.enc
-wget -O /tmp/system.enc "$DOWNLOAD_URL"
+# 函数：尝试下载并验证
+try_download() {
+    local url=$1
+    echo -e "${YELLOW}>> 尝试线路: $url${NC}"
+    rm -f /tmp/system.enc
+    wget -q -O /tmp/system.enc "$url"
+    
+    # 验证：文件是否存在 且 大于1KB 且 不包含 HTML 标签
+    if [ -s /tmp/system.enc ] && [ $(stat -c%s /tmp/system.enc) -gt 1024 ] && ! grep -q "<!DOCTYPE" /tmp/system.enc; then
+        return 0 # 成功
+    else
+        return 1 # 失败
+    fi
+}
 
-# 检查文件完整性 (如果小于 1KB 说明是 404 页)
-FILE_SIZE=$(stat -c%s "/tmp/system.enc" 2>/dev/null || echo 0)
-if [ "$FILE_SIZE" -lt 1000 ]; then
-    echo ">> CDN 缓存可能未刷新，尝试直连 GitHub..."
-    # 备用方案：ghproxy 代理
-    wget -O /tmp/system.enc "https://mirror.ghproxy.com/https://raw.githubusercontent.com/xyf0104/ranxiaoer-pos/main/ranxiaoer_secret_v20.enc"
-fi
+# 2. 开始下载 (三级重试)
+echo ">> 正在拉取加密镜像..."
 
-if [ ! -s /tmp/system.enc ] || [ $(stat -c%s "/tmp/system.enc") -lt 1000 ]; then
-    echo -e "${RED}❌ 下载失败！请检查 GitHub 文件名是否为 ranxiaoer_secret_v20.enc${NC}"
+if try_download "$URL_PAGES"; then
+    echo -e "${GREEN}✅ GitHub Pages 直连下载成功！${NC}"
+elif try_download "$URL_PROXY1"; then
+    echo -e "${GREEN}✅ 备用线路 1 下载成功！${NC}"
+elif try_download "$URL_PROXY2"; then
+    echo -e "${GREEN}✅ 备用线路 2 下载成功！${NC}"
+else
+    echo -e "${RED}❌ 所有线路均失败！请检查 GitHub 仓库是否有名为 ${FILE_NAME} 的文件，并确保已上传 .nojekyll 文件。${NC}"
     exit 1
 fi
 
 # 3. 密码验证
 echo ""
 echo "检测到加密镜像。"
-echo -n "🔑 请输入恢复密码: "
+echo -n "🔑 请输入恢复密码 : "
 read -s PASSWORD < /dev/tty
 echo ""
 
 echo ">> 正在解密..."
+# 尝试解密
 openssl enc -d -aes-256-cbc -pbkdf2 -in /tmp/system.enc -out /tmp/system.tar.gz -k "$PASSWORD" 2>/dev/null
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ 密码正确，解密成功！${NC}"
 else
-    echo -e "${RED}❌ 密码错误！${NC}"
+    echo -e "${RED}❌ 解密失败！可能有以下原因：${NC}"
+    echo "1. 密码输入错误 (注意大小写)"
+    echo "2. 文件下载不完整 (尝试重新运行)"
     rm -f /tmp/system.enc /tmp/system.tar.gz
     exit 1
 fi
