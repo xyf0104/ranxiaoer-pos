@@ -1,13 +1,9 @@
 #!/bin/bash
 
 # ================= 配置区域 =================
-# ⚠️ 注意：这里的文件名改成了 v17
-GITHUB_FILE_URL="https://github.com/xyf0104/ranxiaoer-pos/raw/main/ranxiaoer_secret_v17.enc"
+# 使用 jsDelivr 官方格式 (最稳)
+DOWNLOAD_URL="https://cdn.jsdelivr.net/gh/xyf0104/ranxiaoer-pos@main/ranxiaoer_secret_v17.enc"
 # ===========================================
-
-# 定义加速代理 (使用 mirror.ghproxy.com)
-PROXY_PREFIX="https://mirror.ghproxy.com/"
-DOWNLOAD_URL="${PROXY_PREFIX}${GITHUB_FILE_URL}"
 
 # 颜色
 GREEN='\033[0;32m'
@@ -15,7 +11,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${GREEN}=================================================${NC}"
-echo -e "${GREEN}   🔐 然小二系统 · GitHub 极速恢复脚本 (v17)${NC}"
+echo -e "${GREEN}   🔐 然小二系统 · 极速恢复脚本 (v17 Final)${NC}"
 echo -e "${GREEN}=================================================${NC}"
 
 # 1. 检查环境
@@ -25,24 +21,26 @@ elif command -v yum >/dev/null; then
     yum install -y openssl wget >/dev/null
 fi
 
-# 2. 下载 (使用加速链)
-echo ">> 正在从镜像加速节点拉取数据..."
+# 2. 下载
+echo ">> 正在从 CDN 拉取数据..."
 rm -f /tmp/system.enc
 wget -O /tmp/system.enc "$DOWNLOAD_URL"
 
-# 如果加速失败，尝试直连作为备选
-if [ ! -f /tmp/system.enc ] || [ ! -s /tmp/system.enc ]; then
-    echo ">> 加速节点失败，尝试直连..."
-    wget -O /tmp/system.enc "$GITHUB_FILE_URL"
+# 检查文件完整性 (如果小于 1KB 肯定不对)
+FILE_SIZE=$(stat -c%s "/tmp/system.enc" 2>/dev/null || echo 0)
+if [ "$FILE_SIZE" -lt 1000 ]; then
+    echo -e "${RED}❌ 下载失败！可能是 CDN 缓存未刷新，请稍等 1 分钟再试。${NC}"
+    echo "尝试备用链接..."
+    # 备用：直接连 GitHub 源站
+    wget -O /tmp/system.enc "https://github.com/xyf0104/ranxiaoer-pos/raw/main/ranxiaoer_secret_v17.enc"
 fi
 
-# 检查是否下载成功 (如果是404，文件通常是空的或者包含错误html)
-if [ ! -f /tmp/system.enc ] || [ ! -s /tmp/system.enc ] || grep -q "404 Not Found" /tmp/system.enc; then
-    echo -e "${RED}❌ 下载失败！请检查 GitHub 仓库里是否有 ranxiaoer_secret_v17.enc 这个文件。${NC}"
+if [ ! -s /tmp/system.enc ]; then
+    echo -e "${RED}❌ 彻底失败，请检查仓库文件是否存在。${NC}"
     exit 1
 fi
 
-# 3. 密码验证 (强制读取键盘 < /dev/tty)
+# 3. 密码验证
 echo ""
 echo "检测到加密镜像。"
 echo -n "🔑 请输入恢复密码: "
@@ -68,7 +66,7 @@ tar -xzvf /tmp/system.tar.gz -C /root/install >/dev/null 2>&1
 chmod +x /root/install/smart_install.sh
 cd /root/install
 
-# 格式清洗并执行 (再次使用 < /dev/tty 确保子脚本能交互)
+# 格式清洗并执行
 sed -i 's/\r$//' ./smart_install.sh
 ./smart_install.sh < /dev/tty
 
