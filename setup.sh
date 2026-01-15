@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # ================= 配置区域 =================
-# 使用 jsDelivr 官方格式 (最稳)
-DOWNLOAD_URL="https://cdn.jsdelivr.net/gh/xyf0104/ranxiaoer-pos@main/ranxiaoer_secret_v17.enc"
+# 使用 ghproxy 代理直连 GitHub Raw，无视 CDN 缓存，国内极速
+# 格式: https://mirror.ghproxy.com/https://raw.githubusercontent.com/用户名/仓库/main/文件名
+DOWNLOAD_URL="https://mirror.ghproxy.com/https://raw.githubusercontent.com/xyf0104/ranxiaoer-pos/main/ranxiaoer_secret_v17.enc"
 # ===========================================
 
 # 颜色
@@ -11,7 +12,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${GREEN}=================================================${NC}"
-echo -e "${GREEN}   🔐 然小二系统 · 极速恢复脚本 (v17 Final)${NC}"
+echo -e "${GREEN}   🔐 然小二系统 · 极速恢复脚本 (CN直连版)${NC}"
 echo -e "${GREEN}=================================================${NC}"
 
 # 1. 检查环境
@@ -21,22 +22,15 @@ elif command -v yum >/dev/null; then
     yum install -y openssl wget >/dev/null
 fi
 
-# 2. 下载
-echo ">> 正在从 CDN 拉取数据..."
+# 2. 下载 (显示进度条)
+echo ">> 正在拉取加密镜像 (v17)..."
 rm -f /tmp/system.enc
 wget -O /tmp/system.enc "$DOWNLOAD_URL"
 
-# 检查文件完整性 (如果小于 1KB 肯定不对)
-FILE_SIZE=$(stat -c%s "/tmp/system.enc" 2>/dev/null || echo 0)
-if [ "$FILE_SIZE" -lt 1000 ]; then
-    echo -e "${RED}❌ 下载失败！可能是 CDN 缓存未刷新，请稍等 1 分钟再试。${NC}"
-    echo "尝试备用链接..."
-    # 备用：直接连 GitHub 源站
-    wget -O /tmp/system.enc "https://github.com/xyf0104/ranxiaoer-pos/raw/main/ranxiaoer_secret_v17.enc"
-fi
-
-if [ ! -s /tmp/system.enc ]; then
-    echo -e "${RED}❌ 彻底失败，请检查仓库文件是否存在。${NC}"
+if [ ! -s /tmp/system.enc ] || grep -q "404 Not Found" /tmp/system.enc; then
+    echo -e "${RED}❌ 下载失败！请检查 GitHub 仓库里是否有 ranxiaoer_secret_v17.enc${NC}"
+    # 打印出尝试下载的链接，方便调试
+    echo "尝试链接: $DOWNLOAD_URL"
     exit 1
 fi
 
