@@ -63,7 +63,7 @@ fi
 # 3. 密码验证
 echo ""
 echo "检测到加密镜像。"
-echo -n "🔑 请输入恢复密码 (xyf159753): "
+echo -n "🔑 请输入恢复密码 : "
 read -s PASSWORD < /dev/tty
 echo ""
 
