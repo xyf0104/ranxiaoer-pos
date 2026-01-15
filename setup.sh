@@ -3,7 +3,7 @@
 # ================= 配置区域 =================
 # 使用 jsDelivr 极速 CDN (注意：这里直接填了你的用户名和仓库)
 # 格式: https://fastly.jsdelivr.net/gh/用户名/仓库名@分支名/文件名
-DOWNLOAD_URL="https://fastly.jsdelivr.net/gh/xyf0104/ranxiaoer-pos@main/ranxiaoer_secret_new.enc"
+DOWNLOAD_URL="https://github.com/xyf0104/ranxiaoer-pos/raw/refs/heads/main/ranxiaoer_secret_v16.enc"
 # ===========================================
 
 # 颜色
