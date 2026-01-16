@@ -3,17 +3,19 @@
 # ================= 配置区域 =================
 # 核心文件名
 FILE_NAME="ranxiaoer_secret_v22.enc"
+
 # GitHub 仓库信息
 GITHUB_USER="xyf0104"
 GITHUB_REPO="ranxiaoer-pos"
 GITHUB_BRANCH="main"
 # ===========================================
 
-# 线路定义
-URL_PAGES="https://gh-proxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
-URL_PROXY1="https://mirror.ghproxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
-URL_PROXY2="https://github.moeyy.xyz/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
-URL_PROXY3="https://raw.kgithub.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+# 线路定义 (按优先级排序)
+URL_PAGES="https://${GITHUB_USER}.github.io/${GITHUB_REPO}/${FILE_NAME}"
+URL_PROXY1="https://github.moeyy.xyz/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PROXY2="https://mirror.ghproxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PROXY3="https://raw.fgit.cf/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PROXY4="https://gitclone.com/github.com/${GITHUB_USER}/${GITHUB_REPO}/raw/${GITHUB_BRANCH}/${FILE_NAME}"
 
 # 颜色
 GREEN='\033[0;32m'
@@ -22,13 +24,13 @@ YELLOW='\033[0;33m'
 NC='\033[0m'
 
 echo -e "${GREEN}=================================================${NC}"
-echo -e "${GREEN}  🔒 然小二 · 无风智能恢复系统 (多线路自动切换)  ${NC}"
+echo -e "${GREEN}  🔒 然小二 · 无风智能恢复系统 (5线路自动切换)   ${NC}"
 echo -e "${GREEN}=================================================${NC}"
 echo -e "${GREEN}======  一键下载安装  -  自动识别服务器系统  =====${NC}"
 echo -e "${GREEN}=================================================${NC}"
 echo -e "${GREEN}======        请按照系统提示操作执行        =====${NC}"
 echo -e "${GREEN}=================================================${NC}"
-echo -e "${GREEN}======      出入库系统版本v2.2  by无风      =====${NC}"
+echo -e "${GREEN}======      出入库系统版本v2.1  by无风      =====${NC}"
 echo -e "${GREEN}=================================================${NC}"
 
 # 1. 环境准备
@@ -43,9 +45,11 @@ try_download() {
     local url=$1
     echo -e "${YELLOW}>> 尝试线路: $url${NC}"
     rm -f /tmp/system.enc
-    wget -q -O /tmp/system.enc "$url"
     
-    # 验证：文件是否存在 且 大于1KB 且 不包含 HTML 标签
+    # 增加超时限制 (15秒)，防止卡死
+    wget --timeout=15 --tries=2 -q -O /tmp/system.enc "$url"
+    
+    # 验证：文件存在 且 大于1KB 且 不包含 HTML 标签
     if [ -s /tmp/system.enc ] && [ $(stat -c%s /tmp/system.enc) -gt 1024 ] && ! grep -q "<!DOCTYPE" /tmp/system.enc; then
         return 0 # 成功
     else
@@ -53,19 +57,21 @@ try_download() {
     fi
 }
 
-# 2. 开始下载 (三级重试)
+# 2. 开始下载 (五级重试)
 echo ">> 正在拉取加密镜像..."
 
 if try_download "$URL_PAGES"; then
-    echo -e "${GREEN}✅ 主线路  下载成功！${NC}"
+    echo -e "${GREEN}✅ GitHub Pages 直连下载成功！${NC}"
 elif try_download "$URL_PROXY1"; then
-    echo -e "${GREEN}✅ 备用线路 1 下载成功！${NC}"
+    echo -e "${GREEN}✅ 备用线路 1 (Moeyy) 下载成功！${NC}"
 elif try_download "$URL_PROXY2"; then
-    echo -e "${GREEN}✅ 备用线路 2 下载成功！${NC}"
+    echo -e "${GREEN}✅ 备用线路 2 (Ghproxy) 下载成功！${NC}"
 elif try_download "$URL_PROXY3"; then
-    echo -e "${GREEN}✅ 备用线路 3 下载成功！${NC}"    
+    echo -e "${GREEN}✅ 备用线路 3 (FastGit) 下载成功！${NC}"
+elif try_download "$URL_PROXY4"; then
+    echo -e "${GREEN}✅ 备用线路 4 (GitClone) 下载成功！${NC}"
 else
-    echo -e "${RED}❌ 所有线路均失败！请检查 GitHub 仓库是否有名为 ${FILE_NAME} 的文件，并确保已上传 .nojekyll 文件。${NC}"
+    echo -e "${RED}❌ 所有 5 条线路均失败！请检查 GitHub 仓库是否有名为 ${FILE_NAME} 的文件，并确保已上传 .nojekyll 文件。${NC}"
     exit 1
 fi
 
