@@ -13,6 +13,8 @@ GITHUB_BRANCH="main"
 URL_PAGES="https://${GITHUB_USER}.github.io/${GITHUB_REPO}/${FILE_NAME}"
 URL_PROXY1="https://gh-proxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
 URL_PROXY2="https://mirror.ghproxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PROXY1="https://github.moeyy.xyz/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PROXY2="https://raw.kgithub.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
 
 # 颜色
 GREEN='\033[0;32m'
