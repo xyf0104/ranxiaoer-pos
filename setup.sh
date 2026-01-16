@@ -63,6 +63,10 @@ elif try_download "$URL_PROXY1"; then
     echo -e "${GREEN}✅ 备用线路 1 下载成功！${NC}"
 elif try_download "$URL_PROXY2"; then
     echo -e "${GREEN}✅ 备用线路 2 下载成功！${NC}"
+elif try_download "$URL_PROXY3"; then
+    echo -e "${GREEN}✅ 备用线路 3 下载成功！${NC}"
+elif try_download "$URL_PROXY4"; then
+    echo -e "${GREEN}✅ 备用线路 4 下载成功！${NC}"    
 else
     echo -e "${RED}❌ 所有线路均失败！请检查 GitHub 仓库是否有名为 ${FILE_NAME} 的文件，并确保已上传 .nojekyll 文件。${NC}"
     exit 1
