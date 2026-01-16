@@ -9,10 +9,12 @@ GITHUB_REPO="ranxiaoer-pos"
 GITHUB_BRANCH="main"
 # ===========================================
 
-# 线路定义
+# 线路定义 (更新为 2026年 可用节点)
 URL_PAGES="https://${GITHUB_USER}.github.io/${GITHUB_REPO}/${FILE_NAME}"
-URL_PROXY1="https://gh-proxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
-URL_PROXY2="https://mirror.ghproxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+# 节点1: Moeyy (目前最快)
+URL_PROXY1="https://github.moeyy.xyz/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+# 节点2: Kgithub (备用)
+URL_PROXY2="https://raw.kgithub.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
 
 # 颜色
 GREEN='\033[0;32m'
