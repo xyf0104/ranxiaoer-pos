@@ -2,7 +2,7 @@
 
 # ================= 配置区域 =================
 # 核心文件名
-FILE_NAME="https://github.com/xyf0104/ranxiaoer-pos/raw/refs/heads/main/ranxiaoer_secret_v22.enc"
+FILE_NAME="ranxiaoer_secret_v22.enc"
 # GitHub 仓库信息
 GITHUB_USER="xyf0104"
 GITHUB_REPO="ranxiaoer-pos"
