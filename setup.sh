@@ -10,11 +10,10 @@ GITHUB_BRANCH="main"
 # ===========================================
 
 # 线路定义
-URL_PAGES="https://${GITHUB_USER}.github.io/${GITHUB_REPO}/${FILE_NAME}"
-URL_PROXY1="https://gh-proxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
-URL_PROXY2="https://mirror.ghproxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
-URL_PROXY3="https://github.moeyy.xyz/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
-URL_PROXY4="https://raw.kgithub.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PAGES="https://gh-proxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PROXY1="https://mirror.ghproxy.com/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PROXY2="https://github.moeyy.xyz/https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
+URL_PROXY3="https://raw.kgithub.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_NAME}"
 
 # 颜色
 GREEN='\033[0;32m'
@@ -58,15 +57,13 @@ try_download() {
 echo ">> 正在拉取加密镜像..."
 
 if try_download "$URL_PAGES"; then
-    echo -e "${GREEN}✅ GitHub Pages 直连下载成功！${NC}"
+    echo -e "${GREEN}✅ 主线路  下载成功！${NC}"
 elif try_download "$URL_PROXY1"; then
     echo -e "${GREEN}✅ 备用线路 1 下载成功！${NC}"
 elif try_download "$URL_PROXY2"; then
     echo -e "${GREEN}✅ 备用线路 2 下载成功！${NC}"
 elif try_download "$URL_PROXY3"; then
-    echo -e "${GREEN}✅ 备用线路 3 下载成功！${NC}"
-elif try_download "$URL_PROXY4"; then
-    echo -e "${GREEN}✅ 备用线路 4 下载成功！${NC}"    
+    echo -e "${GREEN}✅ 备用线路 3 下载成功！${NC}"    
 else
     echo -e "${RED}❌ 所有线路均失败！请检查 GitHub 仓库是否有名为 ${FILE_NAME} 的文件，并确保已上传 .nojekyll 文件。${NC}"
     exit 1
