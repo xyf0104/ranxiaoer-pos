@@ -1,0 +1,2 @@
+/opt/ranxiaoer/venv/bin/python /opt/ranxiaoer/fix_db_v36.py
+systemctl restart ranxiaoer
