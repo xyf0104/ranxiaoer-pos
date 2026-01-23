@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- 配置区 (已指向 V40.2) ---
-DOWNLOAD_URL="https://gitee.com/ranxiaoer/model/raw/master/ranxiaoer_secret_v42.enc"
+DOWNLOAD_URL="https://gitee.com/ranxiaoer/model/raw/master/ranxiaoer_secret_v45.enc"
 # ---------------------------
 
 GREEN='\033[0;32m'
@@ -15,7 +15,7 @@ echo -e "${GREEN}======  一键下载安装  -  自动识别服务器系统  ===
 echo -e "${GREEN}=================================================${NC}"
 echo -e "${GREEN}======        请按照系统提示操作执行        =====${NC}"
 echo -e "${GREEN}=================================================${NC}"
-echo -e "${GREEN}======      出入库系统版本v4.0.1  by无风      =====${NC}"
+echo -e "${GREEN}======      出入库系统版本v4.5  by无风      =====${NC}"
 echo -e "${GREEN}=================================================${NC}"
 
 # 1. 环境依赖检查与安装
