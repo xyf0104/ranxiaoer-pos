@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# --- 配置区 (已指向 V1.3.2) ---
-DOWNLOAD_URL="https://gitee.com/ranxiaoer/model/raw/master/ranxiaoer_secret_v132.enc"
+# --- 配置区 (V1.3.2 多线路) ---
+GITEE_URL="https://gitee.com/ranxiaoer/model/raw/master/ranxiaoer_v1.3.2.enc"
+GITHUB_URL="https://raw.githubusercontent.com/xyf0104/ranxiaoer-pos/main/ranxiaoer_secret_v132.enc"
 # ---------------------------
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[1;33m'
 NC='\033[0m'
 
 echo -e "${GREEN}=================================================${NC}"
@@ -26,22 +28,29 @@ elif command -v yum >/dev/null; then
     yum install -y openssl wget >/dev/null
 fi
 
-# 2. 下载加密包
-echo ">> 正在从 Gitee 拉取数据..."
+# 2. 多线路下载加密包（优先 Gitee，失败切 GitHub）
 rm -f /tmp/system.enc
+DOWNLOAD_OK=0
 
-# 增加 User-Agent 伪装，防止 Gitee 拦截
-wget -U "Mozilla/5.0" -O /tmp/system.enc "$DOWNLOAD_URL"
-
-# 3. 完整性检查
-if grep -q "<!DOCTYPE html>" /tmp/system.enc; then
-    echo -e "${RED}❌ 下载失败！Gitee 返回了网页而非文件。${NC}"
-    echo "请确保仓库是【公开(Public)】的！"
-    exit 1
+echo ">> 正在从 Gitee 拉取数据..."
+wget -U "Mozilla/5.0" -q --timeout=15 -O /tmp/system.enc "$GITEE_URL" 2>/dev/null
+if [ -s /tmp/system.enc ] && ! grep -q "<!DOCTYPE html>" /tmp/system.enc 2>/dev/null; then
+    DOWNLOAD_OK=1
+    echo -e "${GREEN}✅ Gitee 下载成功${NC}"
+else
+    echo -e "${YELLOW}⚠️ Gitee 不可用，切换 GitHub 线路...${NC}"
+    rm -f /tmp/system.enc
+    wget -U "Mozilla/5.0" -q --timeout=15 -O /tmp/system.enc "$GITHUB_URL" 2>/dev/null
+    if [ -s /tmp/system.enc ] && ! grep -q "<!DOCTYPE html>" /tmp/system.enc 2>/dev/null; then
+        DOWNLOAD_OK=1
+        echo -e "${GREEN}✅ GitHub 下载成功${NC}"
+    fi
 fi
 
-if [ ! -s /tmp/system.enc ]; then
-    echo -e "${RED}❌ 下载失败！文件为空或网络不通。${NC}"
+if [ "$DOWNLOAD_OK" -ne 1 ]; then
+    echo -e "${RED}❌ 下载失败！Gitee 和 GitHub 均不可用。${NC}"
+    echo "请检查网络或确保仓库是【公开(Public)】的！"
+    rm -f /tmp/system.enc
     exit 1
 fi
 
