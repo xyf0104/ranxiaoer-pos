@@ -2,7 +2,7 @@
 
 # --- 配置区 (V1.3.5 多线路) ---
 GITEE_URL="https://gitee.com/ranxiaoer/model/raw/master/ranxiaoer_v1.3.5.enc"
-GITHUB_URL="https://raw.githubusercontent.com/xyf0104/ranxiaoer-pos/main/ranxiaoer_secret_v135.enc"
+GITHUB_URL="https://raw.githubusercontent.com/xyf0104/ranxiaoer-pos/main/ranxiaoer_v1.3.5.enc"
 # ---------------------------
 
 GREEN='\033[0;32m'
